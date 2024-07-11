@@ -40,6 +40,7 @@ jobs:
       - name: Create Artifact
         uses: actions/upload-artifact@v4
         with:
+          name: tosarif-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
           path: tosarif-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
 
   release:
