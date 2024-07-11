@@ -1,0 +1,66 @@
+name: Publish Release Artifacts
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os:
+          - linux
+          - darwin
+          - windows
+        arch:
+          - amd64
+          - arm64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get Go version
+        id: go-version
+        run: echo "go-version=$(cat .go-version)" >> $GITHUB_OUTPUT
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ steps.go-version.outputs.go-version }}
+
+      - name: Build
+        run: GOENV="${{ matrix.os }}" GOARCH="${{ matrix.arch }}" CGO_ENABLED=0 go build . -o ./bin/tosarif
+
+      - name: Archive
+        run: tar -czf tosarif-${{ matrix.os }}-${{ matrix.arch }}.tar.gz ./bin/tosarif
+
+      - name: Create Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: tosarif-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+
+  release:
+    permissions:
+      contents: write
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            ./artifacts/tosarif-linux-amd64.tar.gz
+            ./artifacts/tosarif-linux-arm64.tar.gz
+            ./artifacts/tosarif-darwin-amd64.tar.gz
+            ./artifacts/tosarif-darwin-arm64.tar.gz
+            ./artifacts/tosarif-windows-amd64.tar.gz
+            ./artifacts/tosarif-windows-arm64.tar.gz
