@@ -32,10 +32,10 @@ jobs:
           go-version: ${{ steps.go-version.outputs.go-version }}
 
       - name: Build
-        run: GOENV="${{ matrix.os }}" GOARCH="${{ matrix.arch }}" CGO_ENABLED=0 go build . -o ./bin/tosarif
+        run: GOENV="${{ matrix.os }}" GOARCH="${{ matrix.arch }}" CGO_ENABLED=0 go build -o ./tosarif .
 
       - name: Archive
-        run: tar -czf tosarif-${{ matrix.os }}-${{ matrix.arch }}.tar.gz ./bin/tosarif
+        run: tar -czf tosarif-${{ matrix.os }}-${{ matrix.arch }}.tar.gz ./tosarif
 
       - name: Create Artifact
         uses: actions/upload-artifact@v4
