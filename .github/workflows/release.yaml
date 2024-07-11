@@ -63,6 +63,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
+          fail_on_unmatched_files: true
           files: |
             ${{ github.workspace }}/artifacts/tosarif-linux-amd64/tosarif-linux-amd64.tar.gz
             ${{ github.workspace }}/artifacts/tosarif-linux-arm64/tosarif-linux-arm64.tar.gz
