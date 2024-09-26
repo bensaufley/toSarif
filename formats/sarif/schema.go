@@ -2316,7 +2316,7 @@ type Run struct {
 	// The set of results contained in an SARIF log. The results array can be omitted
 	// when a run is solely exporting rules metadata. It must be present (but may be
 	// empty) if a log file represents an actual scan.
-	Results []Result `json:"results,omitempty" yaml:"results,omitempty" mapstructure:"results,omitempty"`
+	Results []Result `json:"results" yaml:"results" mapstructure:"results"`
 
 	// Automation details that describe the aggregate of runs to which this run
 	// belongs.
